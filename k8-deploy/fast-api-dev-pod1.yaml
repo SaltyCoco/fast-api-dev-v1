@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fast-api-pod
+  labels:
+    app: api-cars-1
+spec:
+  containers:
+    - name: fast-api-container
+      image: dev/fast-api-test:latest
+      ports:
+        - containerPort: 8000

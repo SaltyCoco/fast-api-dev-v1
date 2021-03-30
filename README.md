@@ -1,3 +1,6 @@
+## pydantic
+- [url](https://pydantic-docs.helpmanual.io)
+- Has a built in ORM
 ## Run API
 ```shell script
 uvicorn main:app --reload
