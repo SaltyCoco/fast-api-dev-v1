@@ -20,12 +20,12 @@ def configure():
     api.include_router(cars_api.router)
 
 
-@app.on_event("startup")
+@api.on_event("startup")
 async def startup():
     await database.connect()
 
 
-@app.on_event("shutdown")
+@api.on_event("shutdown")
 async def shutdown():
     await database.disconnect()
 
