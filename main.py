@@ -6,19 +6,18 @@
     5. Find out what template generator the framework uses and fix the landing page.
 '''
 
-import uvicorn
 from fastapi import FastAPI
 
 # from databases import database
 from views import home
 from api import cars_api
-from models import models
+from schema import cars_schema
 from databases.database import engine
 
 
 api = FastAPI()
 
-models.Base.metadata.create_all(engine)
+cars_schema.Base.metadata.create_all(engine)
 
 def configure():
     api.include_router(home.router)
@@ -37,5 +36,5 @@ def configure():
 
 configure()
 
-if __name__ == '__main__':
-    uvicorn.run(api)
+# if __name__ == '__main__':
+#     uvicorn.run(api)

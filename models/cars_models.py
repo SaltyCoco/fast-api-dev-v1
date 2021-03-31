@@ -1,4 +1,4 @@
-# models/cars.py
+# models/cars_models.py
 from pydantic import BaseModel
 
 
@@ -11,5 +11,4 @@ class Car(BaseModel):
     miles: int
     condition_value: int
     color: str
-    is_ready: bool
     price: float

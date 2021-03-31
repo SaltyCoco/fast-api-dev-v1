@@ -3,6 +3,8 @@ from pydantic import BaseModel
 
 
 class CarStatus(BaseModel):
+    id: int
+    car_id: int
     is_ready: bool
     is_pending_sale: bool
     is_sold: bool
