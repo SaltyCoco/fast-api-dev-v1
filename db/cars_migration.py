@@ -11,7 +11,7 @@ cars = sqlalchemy.Table(
     "cars",
     metadata,
     sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
-    sqlalchemy.Column("make", sqlalchemy.String),
+    sqlalchemy.Column("make", sqlalchemy.String, foreign_key=True),
     sqlalchemy.Column("model", sqlalchemy.string),
     sqlalchemy.Column("year_of_manufacture", sqlalchemy.boolean),
     sqlalchemy.Column("miles", sqlalchemy.int),
