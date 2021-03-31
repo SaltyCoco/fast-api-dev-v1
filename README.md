@@ -44,3 +44,6 @@ kill -9 <PID of app>
 ```python
 @router.get("/", include_in_schema=False)
 ```
+## Main Difference Between models and Schema
+- Models hold info for CRUD ops
+- Schema holds info for SQLAlchmey

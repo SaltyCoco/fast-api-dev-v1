@@ -1,10 +1,15 @@
 # api/cars_api.py
 import fastapi
-
-# from models.cars import Car
+from typing import List
+from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy.orm import Session
+import api.car_status_api
+import schema.cars_schema
+from models.cars_models import Car as model_car
 from databases.database import SessionLocal
 
 router = fastapi.APIRouter()
+
 
 def get_db():
     db = SessionLocal()
@@ -13,39 +18,12 @@ def get_db():
     finally:
         db.close()
 
-# @router.get("/cars/", response_model=List[Car])
-# async def get_all_cars():
-#     query = Car.select()
-#     return await SessionLocal.fetch_all(query)
+
+def get_cars(db: SessionLocal, skip: int = 0, limit: int = 100):
+    return db.query(model_car).offset(skip).limit(limit).all()
 
 
-# @router.get("/api/cars/{car_id}")
-# async def read_car(car_id: int, q: Optional[str] = None):
-#     return {"car_id": car_id, "q": q}
-#
-#
-# @router.put("/api/cars/{car_id}")
-# async def update_car(car_id: int, car: Car):
-#     return {
-#         "car_id": car_id,
-#         "car_make": car.make,
-#         "car_model": car.model,
-#         "car_year_of_manufacture": car.year_of_manufacture,
-#         "car_miles": car.miles,
-#         "car_condition_value": car.condition_value,
-#         "car_color": car.color,
-#         "car_price": car.price
-#     }
-#
-#
-# @router.get("/api/cars", response_model=Car)
-# async def car_make_search(car: Car = fastapi.Depends()):
-#     return {
-#         "car_make": car.make,
-#         "car_model": car.model,
-#         "car_year_of_manufacture": car.year_of_manufacture,
-#         "car_miles": car.miles,
-#         "car_condition_value": car.condition_value,
-#         "car_color": car.color,
-#         "car_price": car.price
-#     }
+@router.get("/cars/", response_model=List[model_car])
+def read_cars(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    cars = get_cars(db, skip=skip, limit=limit)
+    return cars

@@ -12,3 +12,9 @@ class Car(BaseModel):
     condition_value: int
     color: str
     price: float
+
+    class Config:
+        orm_mode = True
+
+class CarCreate(Car):
+    pass
