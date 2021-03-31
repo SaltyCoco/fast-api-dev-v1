@@ -6,3 +6,4 @@ starlette==0.13.8
 typing-extensions==3.7.4.3
 uvicorn==0.13.4
 jinja2
+sqlalchemy

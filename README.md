@@ -1,3 +1,7 @@
+## sqlalchemy
+- Notes for [SqlAlchemy](https://www.sqlalchemy.org)
+- In the main.py there are two functiomns that open and close the connection to the db.
+- You have to manually create the table migrations.
 ## pydantic
 - [url](https://pydantic-docs.helpmanual.io)
 - Has a built in ORM
