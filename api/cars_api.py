@@ -1,6 +1,7 @@
 # api/cars_api.py
-from typing import Optional
+from typing import Optional, List
 import fastapi
+
 
 from models.cars import Car
 

@@ -2,6 +2,12 @@
 - Notes for [SqlAlchemy](https://www.sqlalchemy.org)
 - In the main.py there are two functiomns that open and close the connection to the db.
 - You have to manually create the table migrations.
+- When using SQLite you need to have the following but it is __NOT__ needed for postgres.
+```python
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
+```
 ## pydantic
 - [url](https://pydantic-docs.helpmanual.io)
 - Has a built in ORM
@@ -25,7 +31,7 @@ lsof -i tcp:8000
 kill -9 <PID of app>
 ```
 ## Get Auto Complete for Jinja2 Templates
-1. Left click on tmeplate direcotry
+1. Left click on template directory
 2. Go to "Mark Directory As" and select template
 3. It will likely ask you what language you want, select yes.
 4. The pycharm options will pop up, go to "languages & frameworks"

@@ -9,25 +9,30 @@
 import uvicorn
 from fastapi import FastAPI
 
+# from databases import database
 from views import home
 from api import cars_api
+from models import models
+from databases.database import engine
+
 
 api = FastAPI()
 
+models.Base.metadata.create_all(engine)
 
 def configure():
     api.include_router(home.router)
     api.include_router(cars_api.router)
 
-
-@api.on_event("startup")
-async def startup():
-    await database.connect()
-
-
-@api.on_event("shutdown")
-async def shutdown():
-    await database.disconnect()
+# These methods need to be created but I am not sure they even need to be there.
+# @api.on_event("startup")
+# async def startup():
+#     await database.connect()
+#
+#
+# @api.on_event("shutdown")
+# async def shutdown():
+#     await database.disconnect()
 
 
 configure()
