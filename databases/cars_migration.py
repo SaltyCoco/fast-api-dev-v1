@@ -1,9 +1,7 @@
-# db/cars_migration.py
+# databases/cars_migration.py
 import sqlalchemy
 
 DATABASE_URL = "postgres://postgres:postgres@localhost:5432/postgres"
-
-database = databases.Database(DATABASE_URL)
 
 metadata = sqlalchemy.MetaData()
 

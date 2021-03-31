@@ -7,11 +7,11 @@ services:
        sh -c "uvicorn main:app --reload"
 
     environment:
-      - "ENGINE=django.db.backends.postgresql"
+      - "ENGINE=django.databases.backends.postgresql"
       - "DBNAME=postgres"
       - "US=postgres"
       - "PS=postgres"
-      - "HOST=db"
+      - "HOST=databases"
       - "PORT=5432"
     volumes:
       - .:/code

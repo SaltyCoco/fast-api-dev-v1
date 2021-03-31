@@ -10,7 +10,7 @@ router = fastapi.APIRouter()
 # @router.get("/cars/", response_model=List[Car])
 # async def get_all_cars():
 #     query = cars.select()
-#     return await database.fetch_all(query)
+#     return await databases.fetch_all(query)
 
 
 @router.get("/api/cars/{car_id}")

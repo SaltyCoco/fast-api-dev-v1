@@ -2,7 +2,7 @@
     1. Look into pydantic.<models>
     2. Add delete
     3. Azure Deployment
-    4. Connect to db
+    4. Connect to databases
     5. Find out what template generator the framework uses and fix the landing page.
 '''
 
