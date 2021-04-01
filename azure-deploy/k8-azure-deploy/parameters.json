@@ -1,0 +1,66 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceName": {
+            "value": "k8_fastapi_dev"
+        },
+        "location": {
+            "value": "westus"
+        },
+        "dnsPrefix": {
+            "value": "k8-fastapi-dev-dns"
+        },
+        "osDiskSizeGB": {
+            "value": 0
+        },
+        "kubernetesVersion": {
+            "value": "1.18.14"
+        },
+        "networkPlugin": {
+            "value": "kubenet"
+        },
+        "enableRBAC": {
+            "value": true
+        },
+        "vmssNodePool": {
+            "value": true
+        },
+        "windowsProfile": {
+            "value": false
+        },
+        "enablePrivateCluster": {
+            "value": false
+        },
+        "enableHttpApplicationRouting": {
+            "value": true
+        },
+        "enableAzurePolicy": {
+            "value": false
+        },
+        "enableOmsAgent": {
+            "value": true
+        },
+        "workspaceRegion": {
+            "value": "westus"
+        },
+        "workspaceName": {
+            "value": "DefaultWorkspace-12c67686-aeb1-4a31-94e6-0fa3686b867d-WUS"
+        },
+        "omsWorkspaceId": {
+            "value": "/subscriptions/12c67686-aeb1-4a31-94e6-0fa3686b867d/resourceGroups/DefaultResourceGroup-WUS/providers/Microsoft.OperationalInsights/workspaces/DefaultWorkspace-12c67686-aeb1-4a31-94e6-0fa3686b867d-WUS"
+        },
+        "omsSku": {
+            "value": "standalone"
+        },
+        "acrName": {
+            "value": "acrfastapitestdev"
+        },
+        "acrResourceGroup": {
+            "value": "RS-fastapi-dev"
+        },
+        "guidValue": {
+            "value": "b4eeea76-496b-4558-81f1-27e250eec14e"
+        }
+    }
+}

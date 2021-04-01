@@ -1,0 +1,337 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceName": {
+            "type": "String",
+            "metadata": {
+                "description": "The name of the Managed Cluster resource."
+            }
+        },
+        "location": {
+            "type": "String",
+            "metadata": {
+                "description": "The location of AKS resource."
+            }
+        },
+        "dnsPrefix": {
+            "type": "String",
+            "metadata": {
+                "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
+            }
+        },
+        "osDiskSizeGB": {
+            "defaultValue": 0,
+            "minValue": 0,
+            "maxValue": 1023,
+            "type": "Int",
+            "metadata": {
+                "description": "Disk size (in GiB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize."
+            }
+        },
+        "kubernetesVersion": {
+            "defaultValue": "1.7.7",
+            "type": "String",
+            "metadata": {
+                "description": "The version of Kubernetes."
+            }
+        },
+        "networkPlugin": {
+            "allowedValues": [
+                "azure",
+                "kubenet"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "Network plugin used for building Kubernetes network."
+            }
+        },
+        "enableRBAC": {
+            "defaultValue": true,
+            "type": "Bool",
+            "metadata": {
+                "description": "Boolean flag to turn on and off of RBAC."
+            }
+        },
+        "vmssNodePool": {
+            "defaultValue": false,
+            "type": "Bool",
+            "metadata": {
+                "description": "Boolean flag to turn on and off of virtual machine scale sets"
+            }
+        },
+        "windowsProfile": {
+            "defaultValue": false,
+            "type": "Bool",
+            "metadata": {
+                "description": "Boolean flag to turn on and off of virtual machine scale sets"
+            }
+        },
+        "enablePrivateCluster": {
+            "defaultValue": false,
+            "type": "Bool",
+            "metadata": {
+                "description": "Enable private network access to the Kubernetes cluster."
+            }
+        },
+        "enableHttpApplicationRouting": {
+            "defaultValue": true,
+            "type": "Bool",
+            "metadata": {
+                "description": "Boolean flag to turn on and off http application routing."
+            }
+        },
+        "enableAzurePolicy": {
+            "defaultValue": false,
+            "type": "Bool",
+            "metadata": {
+                "description": "Boolean flag to turn on and off Azure Policy addon."
+            }
+        },
+        "enableOmsAgent": {
+            "defaultValue": true,
+            "type": "Bool",
+            "metadata": {
+                "description": "Boolean flag to turn on and off omsagent addon."
+            }
+        },
+        "workspaceRegion": {
+            "defaultValue": "East US",
+            "type": "String",
+            "metadata": {
+                "description": "Specify the region for your OMS workspace."
+            }
+        },
+        "workspaceName": {
+            "type": "String",
+            "metadata": {
+                "description": "Specify the name of the OMS workspace."
+            }
+        },
+        "omsWorkspaceId": {
+            "type": "String",
+            "metadata": {
+                "description": "Specify the resource id of the OMS workspace."
+            }
+        },
+        "omsSku": {
+            "defaultValue": "standalone",
+            "allowedValues": [
+                "free",
+                "standalone",
+                "pernode"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "Select the SKU for your workspace."
+            }
+        },
+        "acrName": {
+            "type": "String",
+            "metadata": {
+                "description": "Specify the name of the Azure Container Registry."
+            }
+        },
+        "acrResourceGroup": {
+            "type": "String",
+            "metadata": {
+                "description": "The name of the resource group the container registry is associated with."
+            }
+        },
+        "guidValue": {
+            "defaultValue": "[newGuid()]",
+            "type": "String",
+            "metadata": {
+                "description": "The unique id used in the role assignment of the kubernetes service to the container registry service. It is recommended to use the default value."
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ContainerService/managedClusters",
+            "apiVersion": "2020-09-01",
+            "name": "[parameters('resourceName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'WorkspaceDeployment-20210401143905')]"
+            ],
+            "tags": {
+                "app": "fastapi-dev"
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "kubernetesVersion": "[parameters('kubernetesVersion')]",
+                "enableRBAC": "[parameters('enableRBAC')]",
+                "dnsPrefix": "[parameters('dnsPrefix')]",
+                "agentPoolProfiles": [
+                    {
+                        "name": "agentpool",
+                        "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
+                        "count": 1,
+                        "vmSize": "Standard_B2s",
+                        "osType": "Linux",
+                        "storageProfile": "ManagedDisks",
+                        "type": "VirtualMachineScaleSets",
+                        "mode": "System",
+                        "maxPods": 110,
+                        "availabilityZones": null
+                    }
+                ],
+                "networkProfile": {
+                    "loadBalancerSku": "standard",
+                    "networkPlugin": "[parameters('networkPlugin')]"
+                },
+                "apiServerAccessProfile": {
+                    "enablePrivateCluster": "[parameters('enablePrivateCluster')]"
+                },
+                "addonProfiles": {
+                    "httpApplicationRouting": {
+                        "enabled": "[parameters('enableHttpApplicationRouting')]"
+                    },
+                    "azurePolicy": {
+                        "enabled": "[parameters('enableAzurePolicy')]"
+                    },
+                    "omsAgent": {
+                        "enabled": "[parameters('enableOmsAgent')]",
+                        "config": {
+                            "logAnalyticsWorkspaceResourceID": "[parameters('omsWorkspaceId')]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "SolutionDeployment-20210401143905",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'WorkspaceDeployment-20210401143905')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2015-11-01-preview",
+                            "type": "Microsoft.OperationsManagement/solutions",
+                            "location": "[parameters('workspaceRegion')]",
+                            "name": "[concat('ContainerInsights', '(', split(parameters('omsWorkspaceId'),'/')[8], ')')]",
+                            "properties": {
+                                "workspaceResourceId": "[parameters('omsWorkspaceId')]"
+                            },
+                            "plan": {
+                                "name": "[concat('ContainerInsights', '(', split(parameters('omsWorkspaceId'),'/')[8], ')')]",
+                                "product": "[concat('OMSGallery/', 'ContainerInsights')]",
+                                "promotionCode": "",
+                                "publisher": "Microsoft"
+                            }
+                        }
+                    ]
+                }
+            },
+            "subscriptionId": "[split(parameters('omsWorkspaceId'),'/')[2]]",
+            "resourceGroup": "[split(parameters('omsWorkspaceId'),'/')[4]]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "WorkspaceDeployment-20210401143905",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2015-11-01-preview",
+                            "type": "Microsoft.OperationalInsights/workspaces",
+                            "location": "[parameters('workspaceRegion')]",
+                            "name": "[parameters('workspaceName')]",
+                            "properties": {
+                                "sku": {
+                                    "name": "[parameters('omsSku')]"
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "subscriptionId": "[split(parameters('omsWorkspaceId'),'/')[2]]",
+            "resourceGroup": "[split(parameters('omsWorkspaceId'),'/')[4]]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "ConnectAKStoACR-4ac5d89a-fe67-424a-9e63-e7cf15c89032",
+            "dependsOn": [
+                "[concat('Microsoft.ContainerService/managedClusters/', parameters('resourceName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "apiVersion": "2018-09-01-preview",
+                            "type": "Microsoft.ContainerRegistry/registries/providers/roleAssignments",
+                            "name": "[concat(parameters('acrName'), '/Microsoft.Authorization/', parameters('guidValue'))]",
+                            "properties": {
+                                "principalId": "[reference(parameters('resourceName'), '2020-09-01').identityProfile.kubeletidentity.objectId]",
+                                "principalType": "ServicePrincipal",
+                                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+                                "scope": "[resourceId(parameters('acrResourceGroup'),'Microsoft.ContainerRegistry/registries/', parameters('acrName'))]"
+                            }
+                        }
+                    ]
+                }
+            },
+            "resourceGroup": "[parameters('acrResourceGroup')]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "ClusterMonitoringMetricPulisherRoleAssignmentDepl-20210401143905",
+            "dependsOn": [
+                "/subscriptions/12c67686-aeb1-4a31-94e6-0fa3686b867d/resourceGroups/RS-fastapi-dev/providers/Microsoft.ContainerService/managedClusters/k8_fastapi_dev"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.ContainerService/managedClusters/providers/roleAssignments",
+                            "apiVersion": "2018-01-01-preview",
+                            "name": "k8_fastapi_dev/Microsoft.Authorization/48312ae4-7a1f-4bea-a806-8310ea6f7205",
+                            "properties": {
+                                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '3913510d-42f4-4e42-8a64-420c390055eb')]",
+                                "principalId": "[reference(parameters('resourceName')).addonProfiles.omsAgent.identity.objectId]",
+                                "scope": "/subscriptions/12c67686-aeb1-4a31-94e6-0fa3686b867d/resourceGroups/RS-fastapi-dev/providers/Microsoft.ContainerService/managedClusters/k8_fastapi_dev"
+                            }
+                        }
+                    ]
+                }
+            },
+            "subscriptionId": "12c67686-aeb1-4a31-94e6-0fa3686b867d",
+            "resourceGroup": "RS-fastapi-dev"
+        }
+    ],
+    "outputs": {
+        "controlPlaneFQDN": {
+            "type": "String",
+            "value": "[reference(concat('Microsoft.ContainerService/managedClusters/', parameters('resourceName'))).fqdn]"
+        }
+    }
+}
