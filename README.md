@@ -1,3 +1,5 @@
+## Application is running on Azure Container Service
+- Using single container, for the [site](https://wa-fastapidev.azurewebsites.net/)
 ## sqlalchemy
 - Notes for [SqlAlchemy](https://www.sqlalchemy.org)
 - In the main.py there are two functiomns that open and close the connection to the db.

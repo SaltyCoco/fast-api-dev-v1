@@ -1,0 +1,8 @@
+GITREPO: "https://github.com/SaltyCoco/fast-api-dev-v1"
+WEBAPPNAME: "fastapi-dev"
+RESOURCE_GROUP: "RS-fastapi-dev"
+SUB_ID: "12c67686-aeb1-4a31-94e6-0fa3686b867d"
+REGISTRY_NAME: "acrfastapitest"
+ACR_SKU: "standard"
+ACR_PLAN: "f1"
+IMAGE_NAME: "fast-api-dev:v1"
