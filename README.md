@@ -13,7 +13,7 @@ engine = create_engine(
 - Has a built in ORM
 ## Run API
 ```shell script
-uvicorn main:app --reload
+uvicorn main:api --reload
 ```
 - run with Docker
 ```shell script

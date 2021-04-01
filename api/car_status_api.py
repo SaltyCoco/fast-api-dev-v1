@@ -6,7 +6,7 @@ from models.car_status_models import CarStatus
 
 router = fastapi.APIRouter()
 
-# models/cars_models.py
+# models/cars_schema.py
 from pydantic import BaseModel
 
 
