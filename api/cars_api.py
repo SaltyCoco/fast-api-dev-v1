@@ -1,7 +1,7 @@
 # api/cars_api.py
 import fastapi
 from typing import List
-from fastapi import Depends, status
+from fastapi import Depends, status, Response, HTTPException
 from sqlalchemy.orm import Session
 from models import cars_models
 from schema import cars_schema
@@ -35,31 +35,46 @@ async def create_car(request: cars_schema.Car, db: Session = Depends(get_db)):
     return new_car
 
 
-@router.get('/cars')
+@router.get('/cars', status_code=200)
 async def get_all_cars(db: Session = Depends(get_db)):
     cars = db.query(cars_models.Car).all()
+    if not cars:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"No cars currently available.")
     return cars
 
 
-@router.get('/cars/{id}')
+@router.get('/cars/{id}', status_code=200)
 async def get_car_by_id(id, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.id == id).first()
+    if not car:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Car with the id {id} is not found.")
     return car
 
 
-@router.get('/cars/model/{model}')
+@router.get('/cars/model/{model}', status_code=200)
 async def get_car_by_model(model, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.model == model).all()
+    if not car:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"{model} does not exists or there are currently none available.")
     return car
 
 
-@router.get('/cars/make/{make}')
+@router.get('/cars/make/{make}', status_code=200)
 async def get_car_by_make(make, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.make == make).all()
+    if not car:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"{make} does not exists or there are currently none available.")
     return car
 
 
 @router.get('/cars/yom/{year_of_manufacture}')
 async def get_car_by_year_of_manufacture(year_of_manufacture, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.year_of_manufacture == year_of_manufacture).all()
+    if not car:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"No cars manufactured in {year_of_manufacture} currently available.")
     return car
