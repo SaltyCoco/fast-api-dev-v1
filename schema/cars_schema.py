@@ -13,8 +13,15 @@ class Car(BaseModel):
     color: str
     price: float
 
+
+class ShowCar(BaseModel):
+    make: str
+    model: str
+    year_of_manufacture: int
+    miles: int
+    condition_value: int
+    color: str
+    price: float
+
     class Config:
         orm_mode = True
-
-class CarCreate(Car):
-    pass
