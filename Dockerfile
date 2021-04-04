@@ -4,6 +4,13 @@ FROM python:3.8
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+RUN curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list >
+#/etc/apt/sources.list.d/mssql-release.list
+RUN apt-get update
+RUN apt-get install msodbcsql17
+RUN apt-get -y install unixodbc-dev
+
 # Set work directory
 WORKDIR /code
 
@@ -16,5 +23,5 @@ COPY . /code/
 
 EXPOSE 8000
 
-#CMD ["uvicorn", "main:api", "--host", "0.0.0.0", "--port", "8000"]
-ENTRYPOINT ["uvicorn", "main:api"]
+CMD ["uvicorn", "main:api", "--host", "0.0.0.0", "--port", "8000"]
+# ENTRYPOINT ["uvicorn", "main:api"]

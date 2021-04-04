@@ -6,7 +6,12 @@
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/db_fastapi_dev.db</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="Microsoft SQL Server - db_fastapi_dev@fastapi-dev.database.windows.net" uuid="9ee8af2c-cf21-43e3-8c4c-d8dc2b49b22c">
+      <driver-ref>sqlserver.ms</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>
+      <jdbc-url>jdbc:sqlserver://fastapi-dev.database.windows.net:1433;database=db_fastapi_dev;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;</jdbc-url>
     </data-source>
   </component>
 </project>

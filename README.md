@@ -10,6 +10,21 @@ engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )
 ```
+## MSSQL
+- This requires a lot of extra steps to get running on MAC and Ubuntu.  The steps are outlined [here](https://stackoverflow.com/questions/44527452/cant-open-lib-odbc-driver-13-for-sql-server-sym-linking-issue)
+- For Mac this should work:
+```shell script
+# Step1: install unixodbc 
+brew install unixodbc
+# Step2: install Microsoft ODBC Driver for SQL Server on MacOS
+brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
+brew update
+brew install msodbcsql mssql-tools
+```
+- For the docker image you will likely need to add:
+```dockerfile
+
+```
 ## pydantic
 - [url](https://pydantic-docs.helpmanual.io)
 - Has a built in ORM
