@@ -9,17 +9,19 @@ from fastapi import FastAPI
 # from databases import database
 from views import home
 from api import cars_api
-from models import cars_models
+from models import cars_models, users_models
 from databases.database import engine
-
 
 api = FastAPI()
 
 cars_models.Base.metadata.create_all(engine)
+users_models.Base.metadata.create_all(engine)
+
 
 def configure():
     api.include_router(home.router)
     api.include_router(cars_api.router)
+
 
 # These methods need to be created but I am not sure they even need to be there.
 # @api.on_event("startup")
