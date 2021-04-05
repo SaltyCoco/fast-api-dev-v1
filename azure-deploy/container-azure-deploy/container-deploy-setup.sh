@@ -28,3 +28,5 @@ az acr repository list --name "$REGISTRY_NAME" --resource-group "$RESOURCE_GROUP
 
 # Build Web App
 az webapp create --name "$WEBAPPNAME" --resource-group "$RESOURCE_GROUP"  --subscription "$SUB_ID"  --plan "$ACR_PLAN" --location westus
+
+az webapp config appsettings set --resource-group RS-fastapi-dev --name fastapi-dev --settings WEBSITES_PORT=8000

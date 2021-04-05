@@ -12,10 +12,17 @@ import urllib
 #     DATABASE_URL, connect_args={"check_same_thread": False}
 # )
 
+# DATABASE_URL = "postgres://postgres:postgres@localhost:5432/postgres"
+# engine = create_engine(
+#     DATABASE_URL}
+# )
+
 # Azure MSSQL engine
 # engine = create_engine(
 #     SQLSERVER_DATABASE
 # )
+
+# Azure MSSQL engine
 user = os.getenv('user')
 password = os.getenv('password')
 host = os.getenv('SERVER_ADDRESS')
