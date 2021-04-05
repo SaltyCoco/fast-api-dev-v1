@@ -19,24 +19,7 @@ def get_db():
         db.close()
 
 
-@router.post('/cars', status_code=status.HTTP_201_CREATED)
-async def create_car(request: cars_schema.Car, db: Session = Depends(get_db)):
-    new_car = cars_models.Car(
-        make=request.make,
-        model=request.model,
-        year_of_manufacture=request.year_of_manufacture,
-        miles=request.miles,
-        condition_value=request.condition_value,
-        color=request.color,
-        price=request.price
-    )
-    db.add(new_car)
-    db.commit()
-    db.refresh(new_car)
-    return new_car
-
-
-@router.get('/cars', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK)
+@router.get('/cars', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK, tags=['Cars'])
 async def get_all_cars(db: Session = Depends(get_db)):
     cars = db.query(cars_models.Car).all()
     if not cars:
@@ -45,7 +28,7 @@ async def get_all_cars(db: Session = Depends(get_db)):
     return cars
 
 
-@router.get('/cars/{id}', response_model=cars_schema.ShowCar, status_code=status.HTTP_200_OK)
+@router.get('/cars/{id}', response_model=cars_schema.ShowCar, status_code=status.HTTP_200_OK, tags=['Cars'])
 async def get_car_by_id(id, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.id == id).first()
     if not car:
@@ -54,7 +37,8 @@ async def get_car_by_id(id, db: Session = Depends(get_db)):
     return car
 
 
-@router.get('/cars/model/{model}', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK)
+@router.get('/cars/model/{model}', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK,
+            tags=['Cars'])
 async def get_car_by_model(model, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.model == model).all()
     if not car:
@@ -63,7 +47,8 @@ async def get_car_by_model(model, db: Session = Depends(get_db)):
     return car
 
 
-@router.get('/cars/make/{make}', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK)
+@router.get('/cars/make/{make}', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK,
+            tags=['Cars'])
 async def get_car_by_make(make, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.make == make).all()
     if not car:
@@ -72,7 +57,8 @@ async def get_car_by_make(make, db: Session = Depends(get_db)):
     return car
 
 
-@router.get('/cars/yom/{year_of_manufacture}', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK)
+@router.get('/cars/yom/{year_of_manufacture}', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK,
+            tags=['Cars'])
 async def get_car_by_year_of_manufacture(year_of_manufacture, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.year_of_manufacture == year_of_manufacture).all()
     if not car:
@@ -81,7 +67,7 @@ async def get_car_by_year_of_manufacture(year_of_manufacture, db: Session = Depe
     return car
 
 
-@router.delete('/car/{id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/car/{id}', status_code=status.HTTP_204_NO_CONTENT, tags=['Cars'])
 def delete_car(id, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.id == id)
     if not car.first():
@@ -91,7 +77,7 @@ def delete_car(id, db: Session = Depends(get_db)):
     return 'done'
 
 
-@router.put('/car/{id}', status_code=status.HTTP_202_ACCEPTED)
+@router.put('/car/{id}', status_code=status.HTTP_202_ACCEPTED, tags=['Cars'])
 def update_car(id, request: cars_schema.Car, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.id == id)
     if not car.first():
@@ -99,3 +85,20 @@ def update_car(id, request: cars_schema.Car, db: Session = Depends(get_db)):
     car.update(request)
     db.commit()
     return 'updated'
+
+
+@router.post('/cars', status_code=status.HTTP_201_CREATED, tags=['Cars'])
+async def create_car(request: cars_schema.Car, db: Session = Depends(get_db)):
+    new_car = cars_models.Car(
+        make=request.make,
+        model=request.model,
+        year_of_manufacture=request.year_of_manufacture,
+        miles=request.miles,
+        condition_value=request.condition_value,
+        color=request.color,
+        price=request.price,
+    )
+    db.add(new_car)
+    db.commit()
+    db.refresh(new_car)
+    return new_car

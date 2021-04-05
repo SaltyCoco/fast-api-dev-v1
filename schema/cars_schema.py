@@ -1,4 +1,5 @@
 # models/cars_schema.py
+
 from pydantic import BaseModel
 
 

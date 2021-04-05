@@ -1,9 +1,7 @@
 # models/cars_models.py
 
-from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String, Float, SmallInteger, Boolean
-from sqlalchemy.dialects.postgresql.base import UUID
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 
 from databases.database import Base
 
@@ -16,3 +14,4 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     password = Column(String)
 
+    cars = relationship('Car', back_populates="seller")

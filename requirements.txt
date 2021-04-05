@@ -8,3 +8,5 @@ uvicorn==0.13.4
 jinja2
 sqlalchemy
 pyodbc
+passlib
+bcrypt
