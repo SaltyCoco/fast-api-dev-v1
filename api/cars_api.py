@@ -5,10 +5,15 @@ from typing import List
 from fastapi import Depends, status, Response, HTTPException
 from sqlalchemy.orm import Session
 from models import cars_models
-from schema import cars_schema
+from schema import cars_schema, users_schema
 from databases.database import SessionLocal
+from .oauth2 import get_current_user
+from repository import cars_repo
 
-router = fastapi.APIRouter()
+router = fastapi.APIRouter(
+    prefix="/cars",
+    tags=['Cars']
+)
 
 
 def get_db():
@@ -19,16 +24,16 @@ def get_db():
         db.close()
 
 
-@router.get('/cars', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK, tags=['Cars'])
-async def get_all_cars(db: Session = Depends(get_db)):
-    cars = db.query(cars_models.Car).all()
+@router.get('/', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK)
+async def get_all_cars(db: Session = Depends(get_db), get_current_user: users_schema.User = Depends(get_current_user)):
+    cars = cars_repo.get_all(db)
     if not cars:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"No cars currently available.")
     return cars
 
 
-@router.get('/cars/{id}', response_model=cars_schema.ShowCar, status_code=status.HTTP_200_OK, tags=['Cars'])
+@router.get('/{id}', response_model=cars_schema.ShowCar, status_code=status.HTTP_200_OK)
 async def get_car_by_id(id, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.id == id).first()
     if not car:
@@ -37,8 +42,7 @@ async def get_car_by_id(id, db: Session = Depends(get_db)):
     return car
 
 
-@router.get('/cars/model/{model}', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK,
-            tags=['Cars'])
+@router.get('/model/{model}', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK)
 async def get_car_by_model(model, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.model == model).all()
     if not car:
@@ -47,8 +51,7 @@ async def get_car_by_model(model, db: Session = Depends(get_db)):
     return car
 
 
-@router.get('/cars/make/{make}', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK,
-            tags=['Cars'])
+@router.get('/make/{make}', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK)
 async def get_car_by_make(make, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.make == make).all()
     if not car:
@@ -57,8 +60,7 @@ async def get_car_by_make(make, db: Session = Depends(get_db)):
     return car
 
 
-@router.get('/cars/yom/{year_of_manufacture}', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK,
-            tags=['Cars'])
+@router.get('/yom/{year_of_manufacture}', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK)
 async def get_car_by_year_of_manufacture(year_of_manufacture, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.year_of_manufacture == year_of_manufacture).all()
     if not car:
@@ -67,7 +69,7 @@ async def get_car_by_year_of_manufacture(year_of_manufacture, db: Session = Depe
     return car
 
 
-@router.delete('/car/{id}', status_code=status.HTTP_204_NO_CONTENT, tags=['Cars'])
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_car(id, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.id == id)
     if not car.first():
@@ -77,7 +79,7 @@ def delete_car(id, db: Session = Depends(get_db)):
     return 'done'
 
 
-@router.put('/car/{id}', status_code=status.HTTP_202_ACCEPTED, tags=['Cars'])
+@router.put('/{id}', status_code=status.HTTP_202_ACCEPTED)
 def update_car(id, request: cars_schema.Car, db: Session = Depends(get_db)):
     car = db.query(cars_models.Car).filter(cars_models.Car.id == id)
     if not car.first():
@@ -87,8 +89,8 @@ def update_car(id, request: cars_schema.Car, db: Session = Depends(get_db)):
     return 'updated'
 
 
-@router.post('/cars', status_code=status.HTTP_201_CREATED, tags=['Cars'])
-async def create_car(request: cars_schema.Car, db: Session = Depends(get_db)):
+@router.post('/', status_code=status.HTTP_201_CREATED)
+async def create_car(request: cars_schema.ShowCar, db: Session = Depends(get_db)):
     new_car = cars_models.Car(
         make=request.make,
         model=request.model,

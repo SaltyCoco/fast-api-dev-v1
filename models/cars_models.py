@@ -18,6 +18,3 @@ class Car(Base):
     condition_value = Column(Integer)
     color = Column(String)
     price = Column(Float)
-    user_id = Column(Integer, ForeignKey('users.id'))
-
-    seller = relationship("User", back_populates="cars")

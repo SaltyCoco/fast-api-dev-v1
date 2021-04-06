@@ -1,8 +1,4 @@
-'''TODO:
-    1. Look into pydantic.<models>
-    2. Add delete
-    3. Azure Deployment
-'''
+# main.py
 
 from fastapi import FastAPI
 
@@ -10,6 +6,7 @@ from fastapi import FastAPI
 from views import home
 from api import cars_api, users_api
 from models import cars_models, users_models
+from api import authentication
 from databases.database import engine
 
 api = FastAPI()
@@ -19,6 +16,7 @@ users_models.Base.metadata.create_all(engine)
 
 
 def configure():
+    api.include_router(authentication.router)
     api.include_router(home.router)
     api.include_router(cars_api.router)
     api.include_router(users_api.router)

@@ -1,6 +1,5 @@
 # schema/user_schema.py
 
-from typing import List, Optional
 from pydantic import BaseModel
 
 
