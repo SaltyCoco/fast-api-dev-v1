@@ -5,13 +5,17 @@ from typing import Optional
 from jose import jwt, JWTError
 import os
 from schema import jwt_token_schema
-from fastapi import Depends, status, HTTPException
+from configparser import ConfigParser
 
+
+dir = os.path.dirname(__file__)
+cfg = ConfigParser()
+cfg.read(os.path.join(dir, 'azure_envs.ini'))
 # to get a string like this run:
 # openssl rand -hex 32
-FASTAPI_SECRET_KEY = os.getenv('FASTAPI_SECRET_KEY')
-FASTAPI_ALGORITHM = os.getenv('FASTAPI_ALGORITHM')
-FASTAPI_ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv('FASTAPI_ACCESS_TOKEN_EXPIRE_MINUTES')
+FASTAPI_SECRET_KEY = cfg.get('envs', 'FASTAPI_SECRET_KEY')
+FASTAPI_ALGORITHM = cfg.get('envs', 'FASTAPI_ALGORITHM')
+FASTAPI_ACCESS_TOKEN_EXPIRE_MINUTES = cfg.get('envs', 'FASTAPI_ACCESS_TOKEN_EXPIRE_MINUTES')
 
 
 def create_access_token(data: dict):
@@ -24,7 +28,7 @@ def create_access_token(data: dict):
 
 def verify_token(token: str, credentials_exception):
     try:
-        payload = jwt.decode(token, os.getenv('FASTAPI_SECRET_KEY'), algorithms=[os.getenv('FASTAPI_ALGORITHM')])
+        payload = jwt.decode(token, FASTAPI_SECRET_KEY, algorithms=[FASTAPI_ALGORITHM])
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception

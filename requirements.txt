@@ -12,3 +12,4 @@ passlib~=1.7.4
 bcrypt
 python-jose
 python-multipart
+configparser
