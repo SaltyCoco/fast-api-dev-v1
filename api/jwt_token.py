@@ -1,13 +1,11 @@
 # api/jwt_token.py
 
-import os
-from jose import JWTError, jwt
-from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import jwt, JWTError
 import os
-from schema.jwt_token_schema import TokenData
+from schema import jwt_token_schema
+from fastapi import Depends, status, HTTPException
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -16,9 +14,9 @@ FASTAPI_ALGORITHM = os.getenv('FASTAPI_ALGORITHM')
 FASTAPI_ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv('FASTAPI_ACCESS_TOKEN_EXPIRE_MINUTES')
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=os.getenv('FASTAPI_ACCESS_TOKEN_EXPIRE_MINUTES'))
+    expire = datetime.utcnow() + timedelta(minutes=FASTAPI_ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, FASTAPI_SECRET_KEY, algorithm=FASTAPI_ALGORITHM)
     return encoded_jwt
@@ -26,12 +24,11 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 def verify_token(token: str, credentials_exception):
     try:
-        payload = jwt.decode(token, os.getenv('FASTAPI_SECRET_KEY', algorithms=[os.getenv('FASTAPI_ALGORITHM')]))
+        payload = jwt.decode(token, os.getenv('FASTAPI_SECRET_KEY'), algorithms=[os.getenv('FASTAPI_ALGORITHM')])
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
-        token_data = TokenData(email=email)
+        token_data = jwt_token_schema.TokenData(email=email)
     except JWTError:
         raise credentials_exception
-    return
 

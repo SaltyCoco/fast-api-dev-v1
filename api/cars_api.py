@@ -4,11 +4,13 @@ import fastapi
 from typing import List
 from fastapi import Depends, status, Response, HTTPException
 from sqlalchemy.orm import Session
+
+from api import oauth2
 from models import cars_models
 from schema import cars_schema, users_schema
 from databases.database import SessionLocal
-from .oauth2 import get_current_user
 from repository import cars_repo
+import api.oauth2 as oauth2
 
 router = fastapi.APIRouter(
     prefix="/cars",
@@ -25,7 +27,7 @@ def get_db():
 
 
 @router.get('/', response_model=List[cars_schema.ShowCar], status_code=status.HTTP_200_OK)
-async def get_all_cars(db: Session = Depends(get_db), get_current_user: users_schema.User = Depends(get_current_user)):
+async def get_all_cars(db: Session = Depends(get_db)):
     cars = cars_repo.get_all(db)
     if not cars:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,

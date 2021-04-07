@@ -1,8 +1,11 @@
 # api/oauth2.py
 
+import os
 from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends
+from jose import jwt, JWTError
+
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")

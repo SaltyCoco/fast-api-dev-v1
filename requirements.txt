@@ -11,3 +11,4 @@ pyodbc~=4.0.30
 passlib~=1.7.4
 bcrypt
 python-jose
+python-multipart
